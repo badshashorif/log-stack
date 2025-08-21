@@ -1,4 +1,4 @@
-# DOT INTERNET — ISP Activity Log Server (Open Source)
+# ISP INTERNET — ISP Activity Log Server (Open Source)
 
 A production-ready, single-node stack to collect and search ISP user activity for ~50,000 users:
 - **NetFlow/IPFIX** (flows, bytes/packets, first/last, NAT fields when exported)
