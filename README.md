@@ -29,7 +29,7 @@ UI & search powered by **Graylog** (Open Source) on **OpenSearch**. You get dash
 
 2) **Start**
 ```bash
-cd di-logstack
+cd log-stack
 sudo ./scripts/install.sh
 ```
 
