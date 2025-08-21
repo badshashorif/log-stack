@@ -1,0 +1,5 @@
+{
+  "title": "parse_mikrotik_nat",
+  "description": "Parse MikroTik firewall/NAT log lines to extract pre/post NAT and ports.",
+  "source": "rule \"parse_mikrotik_nat\"\nwhen\n  has_field(\"message\") && to_string($message.message) =~ /src=.*dst=.*(masquerade|to-addresses|to:)\\s*/\nthen\n  let m = regex(\"src=(?<src_ip>\\d+\\.\\d+\\.\\d+\\.\\d+)(?::(?<src_port>\\d+))?.*dst=(?<dst_ip>\\d+\\.\\d+\\.\\d+\\.\\d+)(?::(?<dst_port>\\d+))?.*(to-addresses|to)\\s*(?<nat_ip>\\d+\\.\\d+\\.\\d+\\.\\d+)(?::(?<nat_port>\\d+))?\", to_string($message.message));\n  set_fields(m);\n  rename_field(\"src_ip\",\"preNAT_src_ip\");\n  rename_field(\"src_port\",\"preNAT_src_port\");\n  rename_field(\"dst_ip\",\"dst_ip\");\n  rename_field(\"dst_port\",\"dst_port\");\n  rename_field(\"nat_ip\",\"postNAT_src_ip\");\n  rename_field(\"nat_port\",\"postNAT_src_port\");\n  set_field(\"event_kind\",\"nat\");\n  route_to_stream(\"ISP Unified Logs\");\nend\n"
+}

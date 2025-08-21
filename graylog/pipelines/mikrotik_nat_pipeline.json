@@ -1,0 +1,5 @@
+{
+  "title": "MikroTik NAT Pipeline",
+  "description": "Pipeline to normalize MikroTik NAT logs and enrich base fields",
+  "source": "pipeline \"MikroTik NAT Pipeline\"\nstage 0 match either\n  rule \"parse_mikrotik_nat\";\nend\n"
+}

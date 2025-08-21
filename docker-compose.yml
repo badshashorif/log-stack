@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: di-opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}"
+      - plugins.security.disabled=true
+      - cluster.name=di-logstack
+      - node.name=opensearch-1
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ${OPENSEARCH_DATA_PATH}:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+
+  mongo:
+    image: mongo:6.0
+    container_name: di-mongo
+    restart: unless-stopped
+    command: ["--wiredTigerCacheSizeGB", "2"]
+    volumes:
+      - ${MONGO_DB_PATH}:/data/db
+
+  graylog:
+    image: graylog/graylog:6.0
+    container_name: di-graylog
+    depends_on:
+      - mongo
+      - opensearch
+    restart: unless-stopped
+    environment:
+      - GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_HTTP_EXTERNAL_URI}
+      - GRAYLOG_ROOT_TIMEZONE=${GRAYLOG_TIMEZONE}
+      - GRAYLOG_ROOT_EMAIL=admin@example.com
+      - GRAYLOG_PASSWORD_SECRET=${GL_PASSWORD_SECRET}
+      - GRAYLOG_ROOT_PASSWORD_SHA2=${GL_ROOT_PW_SHA2}
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200
+      - GRAYLOG_SERVER_JAVA_OPTS=${GRAYLOG_JAVA_OPTS}
+      # Turn on NetFlow/IPFIX feature flags (if needed in some versions)
+      - GRAYLOG_SERVER_FEATURES=netflow,integrations
+    volumes:
+      - ${GRAYLOG_DATA_PATH}:/usr/share/graylog/data
+    ports:
+      - "9000:9000"      # Web UI + API
+      # Inputs will be created by provision.sh (these ports must be published)
+      - "${SYSLOG_UDP_PORT}:${SYSLOG_UDP_PORT}/udp"
+      - "${SYSLOG_TCP_PORT}:${SYSLOG_TCP_PORT}"
+      - "${GELF_UDP_PORT}:${GELF_UDP_PORT}/udp"
+      - "${GELF_TCP_PORT}:${GELF_TCP_PORT}"
+      - "${NETFLOW_PORT}:${NETFLOW_PORT}/udp"
+      - "${IPFIX_PORT}:${IPFIX_PORT}/udp"
+      - "${BEATS_PORT}:${BEATS_PORT}"

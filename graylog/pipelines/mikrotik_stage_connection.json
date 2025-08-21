@@ -1,0 +1,6 @@
+{
+  "stream_id": "${STREAM_ID}",
+  "pipeline_ids": [
+    "${PIPELINE_ID}"
+  ]
+}

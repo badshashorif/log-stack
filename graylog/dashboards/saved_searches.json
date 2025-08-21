@@ -1,0 +1,21 @@
+{
+  "title": "Activity Search",
+  "queries": [
+    {
+      "query": {
+        "type": "elasticsearch",
+        "query_string": "preNAT_src_ip:$ip OR source:$ip OR src_ip:$ip"
+      },
+      "timerange": {
+        "type": "relative",
+        "range": 86400
+      }
+    }
+  ],
+  "requires": {},
+  "state": {
+    "widgets": {},
+    "titles": {}
+  },
+  "owner": "admin"
+}

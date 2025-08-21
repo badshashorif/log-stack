@@ -1,0 +1,32 @@
+! Cisco NCS (Flexible NetFlow) with NAT fields where supported
+! Export to Graylog NETFLOW_UDP_PORT (default 2055)
+flow record ISP-RECORD
+ match ipv4 source address
+ match ipv4 destination address
+ match transport source-port
+ match transport destination-port
+ match ip protocol
+ match interface input
+ collect counter bytes long
+ collect counter packets long
+ collect timestamp absolute first
+ collect timestamp absolute last
+ collect postNAT source address
+ collect postNAPT source transport port
+ collect postNAT destination address
+ collect postNAPT destination transport port
+
+flow exporter GRAYLOG
+ destination <GRAYLOG_IP>
+ transport udp <NETFLOW_PORT>
+ export-protocol netflow-v9
+
+flow monitor ISP-MON
+ exporter GRAYLOG
+ record ISP-RECORD
+ cache timeout active 1800
+ cache timeout inactive 15
+
+interface <WAN_INTERFACE>
+ ip flow monitor ISP-MON input
+ ip flow monitor ISP-MON output
