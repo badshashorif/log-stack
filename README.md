@@ -95,6 +95,7 @@ Saved searches and a Maestro-like dashboard are auto-created by the provision sc
 - MikroTik NAT log অনেক বেশি ভলিউম তৈরি করে—সীমিত রুলে *log=yes* দিন (শুধু CGNAT pool/Out-interface) এবং আলাদা router action/remote syslog ব্যবহার করুন।
 - ডিস্ক অবশ্যই NVMe নিন। `vm.max_map_count=262144` প্রয়োগ করুন (install.sh করে দেয়)।
 
+
 ---
 
 ## Troubleshooting
